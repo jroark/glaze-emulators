@@ -9,7 +9,7 @@ The package emulates the base NTSC PC Engine/TurboGrafx-16.
 
 ```sh
 make -j4 out/pkg/turbografx16.gzp
-tools/mkcfimg.sh out/pce-cf.img 16 16 out/pkg/turbografx16.gzp
+../glaze-os/tools/mkcfimg.sh out/pce-cf.img 16 16 out/pkg/turbografx16.gzp
 ```
 
 Build with the MIPS cross toolchain (`./build.sh` builds the normal NAND and all
@@ -89,7 +89,7 @@ library; large images and other suspended apps reduce available RAM.
 ## Validation
 
 ```sh
-make -C host turbografx16-test pce-hardware-test
+make -C tests turbografx16-test pce-hardware-test
 python3 tests/sega_smoke.py --be300 /path/to/be300 --system turbografx16
 ```
 

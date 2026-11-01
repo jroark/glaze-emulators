@@ -8,7 +8,7 @@ respectively, with integer graphics and sound paths for the BE-300.
 
 ```sh
 make -j4 out/pkg/mastersystem.gzp out/pkg/genesis.gzp
-tools/mkcfimg.sh out/sega-cf.img 16 16 out/pkg/mastersystem.gzp out/pkg/genesis.gzp
+../glaze-os/tools/mkcfimg.sh out/sega-cf.img 16 16 out/pkg/mastersystem.gzp out/pkg/genesis.gzp
 ```
 
 Use the MIPS cross toolchain (`./build.sh` builds the normal NAND and all
@@ -95,9 +95,9 @@ return to the library. Suspended apps reduce available memory.
 ## Validation
 
 ```sh
-make -C host mastersystem-test sms-banks-test genesis-test
+make -C tests mastersystem-test sms-banks-test genesis-test
 python3 tests/sega_smoke.py --be300 /path/to/be300
-make -C host sega-rom-runners
+make -C tests sega-rom-runners
 out/host/sms-rom /external/game.sms out/host/sms-game
 out/host/genesis-rom /external/game.bin out/host/genesis-game
 ```

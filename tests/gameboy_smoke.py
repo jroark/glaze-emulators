@@ -2,7 +2,8 @@
 """Linux/headless package install and gameplay regression. Run inside build tooling.
 
 python3 tests/gameboy_smoke.py --be300 /path/to/be300
-Builds scripted input, runs disposable NAND and CF copies, checks guest markers,
+Builds the packages here and a scripted OS image in GLAZE_DIR (default ../glaze-os),
+runs disposable NAND and CF copies, checks guest markers,
 and restores the normal image build even on a regression failure.
 """
 import argparse
@@ -12,6 +13,7 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
+GLAZE = Path(os.environ.get('GLAZE_DIR', ROOT.parent / 'glaze-os')).resolve()  # a glaze-os checkout
 
 
 def main():
@@ -25,16 +27,21 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
     log = work / 'build.log'
     with log.open('w') as buildlog:
-        def run(command):
-            subprocess.run(command, cwd=ROOT, stdout=buildlog,
+        def run(command, cwd=ROOT):
+            subprocess.run(command, cwd=cwd, stdout=buildlog,
                            stderr=subprocess.STDOUT, check=True)
         try:
-            run(['make', '-j4', 'INPUT_SCRIPT=tests/ui/t_gameboy.txt'])
+            run(['make', '-j4'])
+            # The OS image comes from GLAZE_DIR, built with this repo's input script.
+            script = GLAZE / 'out/emulator-input/t_gameboy.txt'
+            script.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / 'tests/ui/t_gameboy.txt', script)
+            run(['make', '-j4', 'INPUT_SCRIPT=out/emulator-input/t_gameboy.txt'], cwd=GLAZE)
             shutil.copyfile(ROOT / 'out/pkg-res/gameboy/demo.gb', work / 'test.gb')
             shutil.copyfile(ROOT / 'out/pkg-res/gameboy/demo.gbc', work / 'test.gbc')
-            run(['sh', 'tools/mkcfimg.sh', str(work / 'cf.img'), '16', '16',
+            run(['sh', str(GLAZE / 'tools/mkcfimg.sh'), str(work / 'cf.img'), '16', '16',
                  'out/pkg/gameboy.gzp', str(work / 'test.gb'), str(work / 'test.gbc')])
-            shutil.copyfile(ROOT / 'out/glaze.bin', work / 'glaze.bin')
+            shutil.copyfile(GLAZE / 'out/glaze.bin', work / 'glaze.bin')
             env = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy',
                        BE300_AUTOSTOP_SEC='100')
             with (work / 'stdout.log').open('w') as out, (work / 'stderr.log').open('w') as err:
@@ -57,7 +64,7 @@ def main():
             print(f'Game Boy smoke PASS: install, launch, controls, audio path, pause/resume, '
                   f'DMG/CGB, ROM from Card, battery/clock restoration, reset, Home/warm resume. Logs: {work}')
         finally:
-            run(['make', '-j4'])
+            run(['make', '-j4'], cwd=GLAZE)
 
 
 if __name__ == '__main__':

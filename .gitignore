@@ -1,0 +1,19 @@
+out/
+packages/*/build/
+.DS_Store
+__pycache__/
+
+# ROM binaries stay external or in ignored build/test output. Generated
+# demo cartridges go to out/pkg-res only.
+*.[nN][eE][sS]
+*.[gG][bB]
+*.[gG][bB][cC]
+*.[gG][bB][aA]
+*.[rR][oO][mM]
+*.[bB][iI][nN]
+*.[sS][mM][sS]
+*.[gG][gG]
+*.[gG][eE][nN]
+*.[sS][mM][dD]
+*.[pP][cC][eE]
+*.[sS][gG][xX]

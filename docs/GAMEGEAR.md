@@ -8,7 +8,7 @@ LCD viewport, 12-bit palette and polled Start button.
 
 ```sh
 make -j4 out/pkg/gamegear.gzp
-tools/mkcfimg.sh out/gamegear-cf.img 16 16 out/pkg/gamegear.gzp
+../glaze-os/tools/mkcfimg.sh out/gamegear-cf.img 16 16 out/pkg/gamegear.gzp
 ```
 
 Use the MIPS cross toolchain; `./build.sh` builds the normal NAND and all
@@ -70,7 +70,7 @@ rewind are absent. The ROM is borrowed by the core and remains unchanged.
 ## Validation
 
 ```sh
-make -C host gamegear-test gamegear-hardware-test
+make -C tests gamegear-test gamegear-hardware-test
 python3 tests/sega_smoke.py --be300 /path/to/be300 --system gamegear
 ```
 

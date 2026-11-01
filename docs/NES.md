@@ -81,7 +81,7 @@ states, rewinding, PAL and two-player support are not implemented.
 The portable test builds with AddressSanitizer and UndefinedBehaviorSanitizer:
 
 ```sh
-make -C host nes-test
+make -C tests nes-test
 ```
 
 It checks iNES and NES 2.0 headers (including both size encodings, overflow,
@@ -97,7 +97,7 @@ reference `nestest.log`, available in the `other/` directory of
 https://github.com/christopherpow/nes-test-roms. These files are not vendored.
 
 ```sh
-make -C host nes-cpu-test NES_TEST_ROM=/absolute/path/nestest.nes \
+make -C tests nes-cpu-test NES_TEST_ROM=/absolute/path/nestest.nes \
     NES_TEST_LOG=/absolute/path/nestest.log
 ```
 
@@ -107,13 +107,14 @@ than a physical stored flag. Stable unofficial composite instructions are
 covered; this does not establish PPU timing accuracy.
 
 `tests/ui/t_nes.txt` exercises installation, the demo, controls, pause/resume,
-loading the same cartridge from Card, save restoration, reset, and Home/warm resume. Build with
-`make -j4 INPUT_SCRIPT=tests/ui/t_nes.txt`, then boot a copy of the resulting NAND
-with a card containing `nes.gzp` and the demo renamed `test.nes`. Run for 60
+loading the same cartridge from Card, save restoration, reset, and Home/warm resume. Copy it into the
+glaze-os checkout (for example `out/emulator-input/t_nes.txt`), build the OS there with
+`make -j4 INPUT_SCRIPT=out/emulator-input/t_nes.txt`, then boot a copy of the resulting NAND
+with a card containing `nes.gzp` and the demo renamed `test.nes`. `tests/nes_smoke.py` does all of this. Run for 60
 seconds, capture both serial streams, and check `nes: loaded`, `nes: paused`,
 `nes: resumed`, `nes: battery restored` and `nes: reset`. Always boot copies:
 the BE-300 emulator writes NAND and CF on exit. Do not leave scripted input in
-a production image; finish with a normal `make -j4`.
+a production image; finish with a normal `make -j4` in glaze-os.
 
 The verified BE-300 emulator run measured about 56 frames per guest second
 with the demo. That is an emulator measurement, not validation on physical hardware

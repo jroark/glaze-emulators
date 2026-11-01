@@ -89,8 +89,8 @@ cable, Super Game Boy enhancements, infrared and special peripherals are absent.
 ## Validation
 
 ```sh
-make -C host gameboy-test
-make -C host gameboy-rom-test GB_TEST_ROM=/path/to/cpu_instrs.gb
+make -C tests gameboy-test
+make -C tests gameboy-rom-test GB_TEST_ROM=/path/to/cpu_instrs.gb
 out/host/gameboy-rom /path/to/instr_timing.gb
 python3 tests/gameboy_smoke.py --be300 /path/to/be300
 ```

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Install/play both Sega packages in disposable NAND/CF images; restore normal NAND."""
+"""Install/play both Sega packages in disposable NAND/CF images; restore normal NAND.
+
+The OS image is built in GLAZE_DIR (default ../glaze-os) with this repo's input script."""
 import argparse
 import os
 from pathlib import Path
 import shutil
 import subprocess
 ROOT=Path(__file__).resolve().parents[1]
+GLAZE = Path(os.environ.get('GLAZE_DIR', ROOT.parent / 'glaze-os')).resolve()  # a glaze-os checkout
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -22,10 +25,14 @@ def main():
     base=ROOT/'out/shots/sega';base.mkdir(parents=True,exist_ok=True)
     systems=['mastersystem','genesis'] if args.system=='both' else ['gamegear','turbografx16'] if args.system=='new' else [args.system]
     with (base/'build.log').open('w') as buildlog:
-        def run(cmd):subprocess.run(cmd,cwd=ROOT,stdout=buildlog,stderr=subprocess.STDOUT,check=True)
+        def run(cmd,cwd=ROOT):subprocess.run(cmd,cwd=cwd,stdout=buildlog,stderr=subprocess.STDOUT,check=True)
         try:
-            run(['make','-j4','INPUT_SCRIPT=tests/ui/t_sega.txt'])
-            clean=base/'scripted.bin';shutil.copyfile(ROOT/'out/glaze.bin',clean)
+            run(['make','-j4'])
+            # The OS image comes from GLAZE_DIR, built with this repo's input script.
+            script=GLAZE/'out/emulator-input/t_sega.txt';script.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(ROOT/'tests/ui/t_sega.txt',script)
+            run(['make','-j4','INPUT_SCRIPT=out/emulator-input/t_sega.txt'],cwd=GLAZE)
+            clean=base/'scripted.bin';shutil.copyfile(GLAZE/'out/glaze.bin',clean)
             for system in systems:
                 ext={'mastersystem':'sms','genesis':'gen','gamegear':'gg','turbografx16':'pce'}[system]
                 work=base/system;work.mkdir(exist_ok=True)
@@ -34,7 +41,7 @@ def main():
                 # Files sorts by name; keep the installer before the cartridge
                 # regardless of the package ID ("turbografx16" sorts after "test").
                 shutil.copyfile(ROOT/f'out/pkg/{system}.gzp',work/'0-install.gzp')
-                run(['sh','tools/mkcfimg.sh',str(work/'cf.img'),'16','16',str(work/'0-install.gzp'),str(work/f'test.{ext}')])
+                run(['sh',str(GLAZE/'tools/mkcfimg.sh'),str(work/'cf.img'),'16','16',str(work/'0-install.gzp'),str(work/f'test.{ext}')])
                 shutil.copyfile(clean,work/'glaze.bin')
                 env=dict(os.environ,SDL_VIDEODRIVER='dummy',SDL_AUDIODRIVER='dummy',BE300_AUTOSTOP_SEC='100')
                 with (work/'stdout.log').open('w') as out,(work/'stderr.log').open('w') as err:
@@ -54,5 +61,5 @@ def main():
                     if marker in text:raise RuntimeError(f'{system}: {marker}; logs: {work}')
                 saves='demo save writes' if source else 'save/restore'
                 print(f'{system} PASS: install, demo/Card ROM, controls, audio path, {saves}, pause/reset, Home/resume. Logs: {work}',flush=True)
-        finally:run(['make','-j4'])
+        finally:run(['make','-j4'],cwd=GLAZE)
 if __name__=='__main__':main()
