@@ -1,5 +1,5 @@
-#include "../third_party/totalsms/sms.h"
-#include "../third_party/totalsms/sms_internal.h"
+#include "../../third_party/totalsms/sms.h"
+#include "../../third_party/totalsms/sms_internal.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>

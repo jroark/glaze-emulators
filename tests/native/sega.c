@@ -1,5 +1,5 @@
 /* Both adapters execute original generated cartridges with real controller reads. */
-#include "../lib/sega/core.h"
+#include "../../lib/sega/core.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

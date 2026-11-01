@@ -1,5 +1,5 @@
 /* Original generated Game Gear / HuCard demos exercise CPU-facing hardware. */
-#include "../lib/sega/core.h"
+#include "../../lib/sega/core.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

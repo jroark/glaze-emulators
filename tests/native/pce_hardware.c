@@ -1,8 +1,8 @@
-#include "../lib/sega/core.h"
-#include "../third_party/beetle-pce-fast/pce_fast/pce.h"
-#include "../third_party/beetle-pce-fast/pce_fast/huc6280.h"
-#include "../third_party/beetle-pce-fast/pce_fast/vdc.h"
-#include "../third_party/beetle-pce-fast/pce_fast/psg.h"
+#include "../../lib/sega/core.h"
+#include "../../third_party/beetle-pce-fast/pce_fast/pce.h"
+#include "../../third_party/beetle-pce-fast/pce_fast/huc6280.h"
+#include "../../third_party/beetle-pce-fast/pce_fast/vdc.h"
+#include "../../third_party/beetle-pce-fast/pce_fast/psg.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

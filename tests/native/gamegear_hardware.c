@@ -1,6 +1,6 @@
-#include "../third_party/totalsms/sms.h"
-#include "../third_party/totalsms/sms_internal.h"
-#include "../third_party/totalsms/sn76489.h"
+#include "../../third_party/totalsms/sms.h"
+#include "../../third_party/totalsms/sms_internal.h"
+#include "../../third_party/totalsms/sn76489.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
