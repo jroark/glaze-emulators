@@ -1,5 +1,5 @@
 /* Exercise real persistence code against a filesystem with injected failures. */
-#include "../packages/gameboy/save.h"
+#include "../../packages/gameboy/save.h"
 #include <glaze/fs.h>
 #include <assert.h>
 #include <stdio.h>

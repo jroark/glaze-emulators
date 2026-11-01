@@ -1,5 +1,5 @@
 /* Optional external Blargg serial-output oracle. Test ROMs are not vendored. */
-#include "../packages/gameboy/gameboy.h"
+#include "../../packages/gameboy/gameboy.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

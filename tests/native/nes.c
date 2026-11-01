@@ -1,8 +1,8 @@
 /* Execute our original cartridge against the real CPU/PPU/APU core. */
-#include "../packages/nes/core.h"
-#include "../third_party/infones/InfoNES.h"
-#include "../third_party/infones/InfoNES_Mapper.h"
-#include "../third_party/infones/K6502.h"
+#include "../../packages/nes/core.h"
+#include "../../third_party/infones/InfoNES.h"
+#include "../../third_party/infones/InfoNES_Mapper.h"
+#include "../../third_party/infones/K6502.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,5 +1,5 @@
 /* Optional external-cartridge smoke runner. ROMs remain outside Git. */
-#include "../lib/sega/core.h"
+#include "../../lib/sega/core.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

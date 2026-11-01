@@ -1,8 +1,8 @@
 /* Optional nestest CPU oracle; supply the externally obtained ROM and trace.
  * B is not a physical stored status bit; compare all other flags and cycles.
  */
-#include "../packages/nes/core.h"
-#include "../third_party/infones/K6502.h"
+#include "../../packages/nes/core.h"
+#include "../../third_party/infones/K6502.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
