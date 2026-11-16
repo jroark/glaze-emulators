@@ -5,6 +5,7 @@ microkernel OS for the Casio BE-300. Each is an installable `.gzp` package:
 
 | Package | System | Core | Guide |
 | --- | --- | --- | --- |
+| `macintosh` | Macintosh 512K | uMac / Musashi | [Macintosh](docs/MACINTOSH.md) |
 | `nes` | NES / Famicom (iNES and NES 2.0, mappers 0–4) | InfoNES | [NES](docs/NES.md) |
 | `gameboy` | Game Boy and Game Boy Color | gnuboy | [Game Boy](docs/GAMEBOY.md) |
 | `mastersystem` | Sega Master System | TotalSMS | [Sega](docs/SEGA.md) |
@@ -12,7 +13,7 @@ microkernel OS for the Casio BE-300. Each is an installable `.gzp` package:
 | `gamegear` | Sega Game Gear | TotalSMS | [Game Gear](docs/GAMEGEAR.md) |
 | `turbografx16` | TurboGrafx-16 / PC Engine HuCards | Beetle PCE Fast | [TurboGrafx-16](docs/TURBOGRAFX16.md) |
 
-No ROMs are included. Each package carries an original demo cartridge,
+No ROMs are included. The console packages carry original demo cartridges,
 generated at build time by the scripts in `tools/`. Bring your own cartridges
 on a CompactFlash card.
 

@@ -17,3 +17,8 @@ __pycache__/
 *.[sS][mM][dD]
 *.[pP][cC][eE]
 *.[sS][gG][xX]
+
+# User-supplied Macintosh media
+*.[dD][sS][kK]
+*.[iI][mM][gG]
+packages/macintosh/*.7z

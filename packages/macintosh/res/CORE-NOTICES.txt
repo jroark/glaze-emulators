@@ -1,0 +1,166 @@
+/* umac disc emulation
+ *
+ * Contains a PV wrapper around a cut-down version of Basilisk II's
+ * sony.cpp disc driver, with copyright/licence as shown inline below.
+ *
+ * Remaining (top) code is Copyright 2024 Matt Evans.
+ *
+ */
+
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "disc.h"
+#include "m68k.h"
+#include "machw.h"
+
+#ifdef DEBUG
+#define DDBG(...)       printf(__VA_ARGS__)
+#else
+#define DDBG(...)       do {} while(0)
+#endif
+
+#define DERR(...)       fprintf(stderr, __VA_ARGS__)
+
+extern void umac_disc_ejected(void);
+
+// B2 decls:
+static int16_t SonyOpen(uint32_t pb, uint32_t dce, uint32_t status);
+static int16_t SonyPrime(uint32_t pb, uint32_t dce);
+static int16_t SonyControl(uint32_t pb, uint32_t dce);
+static int16_t SonyStatus(uint32_t pb, uint32_t dce);
+
+static void    SonyInit(disc_descr_t discs[DISC_NUM_DRIVES]);
+
+void    disc_init(disc_descr_t discs[DISC_NUM_DRIVES])
+{
+        SonyInit(discs);
+}
+
+/* This is the entrypoint redirected from the PV .Sony replacement driver.
+ * Largely re-uses code from Basilisk!
+ */
+int     disc_pv_hook(uint8_t opcode)
+{
+        uint32_t a0 = m68k_get_reg(NULL, M68K_REG_A0);
+        uint32_t a1 = m68k_get_reg(NULL, M68K_REG_A1);
+        uint32_t a2 = m68k_get_reg(NULL, M68K_REG_A2);
+        uint32_t d0 = 0;
+
+        switch(opcode) {
+        case 0: // Open
+                DDBG("[Disc: OPEN]\n");
+                d0 = SonyOpen(ADR24(a0), ADR24(a1), ADR24(a2));
+                break;
+        case 1: // Prime
+                DDBG("[Disc: PRIME]\n");
+                d0 = SonyPrime(ADR24(a0), ADR24(a1));
+                break;
+        case 2: // Control
+                DDBG("[Disc: CONTROL]\n");
+                d0 = SonyControl(ADR24(a0), ADR24(a1));
+                break;
+        case 3: // Status
+                DDBG("[Disc: STATUS]\n");
+                d0 = SonyStatus(ADR24(a0), ADR24(a1));
+                break;
+
+        default:
+                DERR("[Disc PV op %02x unhandled!]\n", opcode);
+                return -1;
+        };
+
+        // Return val:
+        m68k_set_reg(M68K_REG_D0, d0);
+        return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Basilisk II code follows
+
+#define WriteMacInt32(addr, val)        RAM_WR32(addr, val)
+#define WriteMacInt16(addr, val)        RAM_WR16(addr, val)
+#define WriteMacInt8(addr, val)         RAM_WR8(addr, val)
+#define ReadMacInt32(addr)              RAM_RD32(addr)
+#define ReadMacInt16(addr)              RAM_RD16(addr)
+#define ReadMacInt8(addr)               RAM_RD8(addr)
+
+#define Mac2HostAddr(addr)              (ram_get_base() + ADR24(addr))
+
+// These access host pointers, in BE/unaligned:
+#define WriteBEInt32(addr, val)         WRITE_LONG(((uint8_t *)(addr)), 0, val)
+#define WriteBEInt16(addr, val)         WRITE_WORD(((uint8_t *)(addr)), 0, val)
+#define WriteBEInt8(addr, val)          WRITE_BYTE(((uint8_t *)(addr)), 0, val)
+
+/*
+ *  sony.cpp - Replacement .Sony driver (floppy drives)
+ *
+ *  Basilisk II (C) 1997-2008 Christian Bauer
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/*
+ *  SEE ALSO
+ *    Inside Macintosh: Devices, chapter 1 "Device Manager"
+ *    Technote DV 05: "Drive Queue Elements"
+ *    Technote DV 07: "Forcing Floppy Disk Size to be Either 400K or 800K"
+ *    Technote DV 17: "Sony Driver: What Your Sony Drives For You"
+ *    Technote DV 23: "Driver Education"
+ *    Technote FL 24: "Don't Look at ioPosOffset for Devices"
+ */
+
+#include "b2_macos_util.h"
+
+
+// Struct for each drive
+/* Mac keyboard scancodes
+ *
+ * From Mini vMac's src/OSGLUAAA.h which is Copyright (C) 2006 Philip
+ * Cummins, Richard F. Bannister, Paul C. Pratt, and released under
+ * GPLv2.
+ */
+
+#ifndef KEYMAP_H
+/* ======================================================================== */
+/* ========================= LICENSING & COPYRIGHT ======================== */
+/* ======================================================================== */
+/*
+ *                                  MUSASHI
+ *                                Version 4.5
+ *
+ * A portable Motorola M680x0 processor emulation engine.
+ * Copyright Karl Stenerud.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */

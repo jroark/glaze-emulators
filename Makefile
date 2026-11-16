@@ -10,7 +10,7 @@ GLAZE_SDK ?= $(abspath ../glaze-os/out/sdk/glaze-sdk)
 CROSS ?= mipsel-linux-gnu-
 PYTHON ?= python3
 OUT ?= out
-EMULATORS := nes gameboy mastersystem gamegear genesis turbografx16
+EMULATORS := nes gameboy mastersystem gamegear genesis turbografx16 macintosh
 
 .DEFAULT_GOAL := all
 .PHONY: all test clean FORCE sdk-check
