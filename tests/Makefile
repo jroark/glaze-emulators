@@ -116,3 +116,23 @@ pce-hardware-test:
 	$(CC) $(SEGA_TEST_FLAGS) -fno-strict-aliasing -o ../out/host/pce-hardware ../tests/native/pce_hardware.c $(PCE_CORE)
 	../out/host/pce-hardware
 .PHONY: gamegear-hardware-test pce-hardware-test
+
+MAC := ../packages/macintosh
+macintosh-test:
+	$(CC) -std=gnu11 -O2 -g -Wall -Wextra -fsanitize=address,undefined -I$(GLAZE_INCLUDE) -o ../out/host/macintosh-test native/macintosh.c $(MAC)/adapter.c $(MAC)/view.c
+	../out/host/macintosh-test
+check: macintosh-test
+.PHONY: macintosh-test
+
+# Optional private-ROM boot runner. Writes only a framebuffer under out/.
+UMAC := ../third_party/umac
+MACGEN := ../out/host/mac-generated
+$(MACGEN)/m68kmake: $(UMAC)/Musashi/m68kmake.c
+	@mkdir -p $(MACGEN)
+	$(CC) -O2 $< -o $@
+$(MACGEN)/m68kops.c $(MACGEN)/m68kops.h &: $(MACGEN)/m68kmake $(UMAC)/Musashi/m68k_in.c
+	$(MACGEN)/m68kmake $(MACGEN) $(UMAC)/Musashi/m68k_in.c
+macintosh-boot: $(MACGEN)/m68kops.c
+	$(CC) -O2 -g -fno-strict-aliasing -fsanitize=address,undefined -I$(UMAC)/include -I$(UMAC)/Musashi -I$(MACGEN) -DMUSASHI_CNF='"../include/m68kconf.h"' -DUMAC_MEMSIZE=512 -DDISP_WIDTH=512 -DDISP_HEIGHT=342 -DENABLE_DASM=0 native/macintosh_boot.c $(addprefix $(UMAC)/src/,main.c rom.c via.c scc.c disc.c) $(UMAC)/Musashi/m68kcpu.c $(MACGEN)/m68kops.c -o ../out/host/macintosh-boot
+	../out/host/macintosh-boot "$(MAC_ROM)" "$(MAC_DISK)" ../out/host/macintosh-boot.pgm
+.PHONY: macintosh-boot

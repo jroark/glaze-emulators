@@ -5,6 +5,7 @@ port changes made for Glaze; the packages under `packages/` hold the Glaze glue.
 
 | Directory | Project | Version | License |
 | --- | --- | --- | --- |
+| `umac/` | [uMac](https://github.com/evansm7/umac), Macintosh 512K with pinned Musashi | pins in `umac/UPSTREAM.md` | MIT and GPL-2.0-or-later; combined app GPLv3 |
 | `beetle-pce-fast/` | [Beetle PCE Fast](https://github.com/libretro/beetle-pce-fast-libretro), C HuC6280 CPU, VDC/VCE and PSG for HuCards | `4eee99c451f8` | GPL-2.0-or-later, elected GPLv3 for the app; `COPYING` and `UPSTREAM.md` |
 | `totalsms/` | [TotalSMS](https://github.com/ITotalJustice/TotalSMS), Master System / Game Gear CPU/VDP and cartridge mappers; scheduler dependency | `05bbb8bbd931` | MIT; pins and port changes in `totalsms/UPSTREAM.md`; original integer PSG in `packages/mastersystem/psg.c` |
 | `clownmdemu/` | [ClownMDEmu](https://github.com/Clownacy/clownmdemu), Genesis CPU/VDP/FM/PSG, Clown68000 and ClownZ80 | `88ef45a65855` | AGPL-3.0-or-later; clowncommon ISC; dependency pins and port changes in `clownmdemu/UPSTREAM.md` |

@@ -1,0 +1,3 @@
+Macintosh emulator using uMac (Matt Evans) and Musashi (Karl Stenerud).
+No Apple ROM or system software included. Supply a Mac Plus V3 ROM and raw boot disk.
+See bundled upstream README for copyright notices.
